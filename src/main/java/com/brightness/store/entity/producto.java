@@ -7,7 +7,7 @@ import java.math.BigDecimal;
 @Entity
 @Table(name = "productos")
 
-public class producto {
+public class Producto {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
@@ -25,7 +25,7 @@ public class producto {
   private Integer stock;
 
   // Constructor vacio (OBLIGATORIO para JPA)
-  public producto() {
+  public Producto() {
   }
 
   // Getters
