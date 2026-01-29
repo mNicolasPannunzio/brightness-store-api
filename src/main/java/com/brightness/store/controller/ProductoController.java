@@ -1,59 +1,51 @@
 package com.brightness.store.controller;
 
 import com.brightness.store.entity.Producto;
-import com.brightness.store.repository.ProductoRepository;
+import com.brightness.store.service.ProductoService;
 
 import jakarta.validation.Valid;
 
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.HttpStatus;
-
-
 import java.util.List;
 
 @RestController
 @RequestMapping("/productos")
 public class ProductoController{
 
-  private final ProductoRepository productoRepository;
+  private final ProductoService productoService;
 
-  public ProductoController(ProductoRepository productoRepository){
-    this.productoRepository = productoRepository;
+  public ProductoController(ProductoService productoService){
+    this.productoService = productoService;
   }
 
   @GetMapping
-  public List<Producto> obtenerProductos(){
-    return productoRepository.findAll();
+  public ResponseEntity<List<Producto>> listar() {
+    return ResponseEntity.ok(productoService.obtenerTodos());
   }
 
   @GetMapping("/{id}")
-  public ResponseEntity<Producto> obtenerProductoPorId(@PathVariable Long id) {
-
-    return productoRepository.findById(id)
-            .map(producto -> ResponseEntity.ok(producto))
+  public ResponseEntity<Producto> obtenerPorId(@PathVariable Long id) {
+    return productoService.obtenerPorId(id)
+            .map(ResponseEntity::ok)
             .orElse(ResponseEntity.notFound().build());
   }
 
   @PostMapping
-  public ResponseEntity<Producto> crearProducto(@Valid @RequestBody Producto producto){
-    
-    Producto productoGuardado = productoRepository.save(producto);
-
-    return ResponseEntity.status(HttpStatus.CREATED).body(productoGuardado);
+  public ResponseEntity<Producto> crear(@Valid @RequestBody Producto producto) {
+    Producto guardado = productoService.guardar(producto);
+    return ResponseEntity.status(201).body(guardado);
   }
 
   @DeleteMapping("/{id}")
-  public ResponseEntity<Void> eliminarProducto(@PathVariable Long id){
+  public ResponseEntity<Void> eliminar(@PathVariable Long id) {
+    boolean eliminado = productoService.eliminarPorId(id);
 
-    if (!productoRepository.existsById(id)){
+    if (!eliminado) {
       return ResponseEntity.notFound().build();
     }
 
-    productoRepository.deleteById(id);
-    return ResponseEntity.noContent().build(); //HTTP 204
-    
+    return ResponseEntity.noContent().build();
   }
-
 
 }
