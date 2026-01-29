@@ -1,6 +1,7 @@
 package com.brightness.store.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 
 import java.math.BigDecimal;
 
@@ -12,15 +13,20 @@ public class Producto {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @Column(nullable = false)
+  @NotBlank(message = "el nombre es obligatorio")
+  @Column(nullable = false, length = 100)
   private String nombre;
 
   @Column(length = 500)
   private String descripcion;
 
+  @NotNull(message = "El precio es obligatorio")
+  @Positive(message = "El precio debe ser mayor a 0")
   @Column(nullable = false)
   private BigDecimal precio;
 
+  @NotNull(message = "El stock es obligatorio")
+  @PositiveOrZero(message = "El stock no puede ser negativo")
   @Column(nullable = false)
   private Integer stock;
 

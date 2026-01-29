@@ -2,8 +2,12 @@ package com.brightness.store.controller;
 
 import com.brightness.store.entity.Producto;
 import com.brightness.store.repository.ProductoRepository;
+
+import jakarta.validation.Valid;
+
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
 
 
 import java.util.List;
@@ -31,8 +35,11 @@ public class ProductoController{
   }
 
   @PostMapping("/productos")
-  public Producto crearProducto(@RequestBody Producto producto){
-    return productoRepository.save(producto);
+  public ResponseEntity<Producto> crearProducto(@Valid @RequestBody Producto producto){
+    
+    Producto productoGuardado = productoRepository.save(producto);
+
+    return ResponseEntity.status(HttpStatus.CREATED).body(productoGuardado);
   }
 
 
