@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import java.util.List;
 
 @RestController
+@RequestMapping("/productos")
 public class ProductoController{
 
   private final ProductoRepository productoRepository;
@@ -21,12 +22,12 @@ public class ProductoController{
     this.productoRepository = productoRepository;
   }
 
-  @GetMapping("/productos")
+  @GetMapping
   public List<Producto> obtenerProductos(){
     return productoRepository.findAll();
   }
 
-  @GetMapping("/productos/{id}")
+  @GetMapping("/{id}")
   public ResponseEntity<Producto> obtenerProductoPorId(@PathVariable Long id) {
 
     return productoRepository.findById(id)
@@ -34,12 +35,24 @@ public class ProductoController{
             .orElse(ResponseEntity.notFound().build());
   }
 
-  @PostMapping("/productos")
+  @PostMapping
   public ResponseEntity<Producto> crearProducto(@Valid @RequestBody Producto producto){
     
     Producto productoGuardado = productoRepository.save(producto);
 
     return ResponseEntity.status(HttpStatus.CREATED).body(productoGuardado);
+  }
+
+  @DeleteMapping("/{id}")
+  public ResponseEntity<Void> eliminarProducto(@PathVariable Long id){
+
+    if (!productoRepository.existsById(id)){
+      return ResponseEntity.notFound().build();
+    }
+
+    productoRepository.deleteById(id);
+    return ResponseEntity.noContent().build(); //HTTP 204
+    
   }
 
 
