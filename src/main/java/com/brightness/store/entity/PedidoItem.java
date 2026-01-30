@@ -2,6 +2,7 @@ package com.brightness.store.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
+import java.math.BigDecimal;
 
 @Entity
 @Table(name = "pedido_items")
@@ -11,16 +12,22 @@ public class PedidoItem {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @ManyToOne
+  @ManyToOne(optional = false)
   @JoinColumn(name = "pedido_id", nullable = false)
   private Pedido pedido;
 
-  @ManyToOne
+  @ManyToOne(optional = false)
   @JoinColumn(name = "producto_id",  nullable = false)
   private Producto producto;
 
+  @Column(nullable = false)
   @Min(1)
-  private int cantidad;
+  private Integer cantidad;
+
+  @Column(nullable = false)
+  private BigDecimal precioUnitario;
+
+  public PedidoItem(){}
 
   // Getters
 
@@ -36,8 +43,12 @@ public class PedidoItem {
     return this.producto;
   }
 
-  public int getCantidad(){
+  public Integer getCantidad(){
     return this.cantidad;
+  }
+
+  public BigDecimal getPrecioUnitario(){
+    return this.precioUnitario;
   }
 
   // Setters
@@ -50,7 +61,11 @@ public class PedidoItem {
     this.producto = pProducto;
   }
 
-  public void setCantidad(int pCantidad){
+  public void setCantidad(Integer pCantidad){
     this.cantidad = pCantidad;
+  }
+
+  public void setPrecioUnitario(BigDecimal pPrecioUnitario){
+    this.precioUnitario = pPrecioUnitario;
   }
 }
