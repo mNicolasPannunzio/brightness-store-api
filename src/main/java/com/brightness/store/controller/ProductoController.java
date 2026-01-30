@@ -15,8 +15,8 @@ public class ProductoController{
 
   private final ProductoService productoService;
 
-  public ProductoController(ProductoService productoService){
-    this.productoService = productoService;
+  public ProductoController(ProductoService pProductoService){
+    this.productoService = pProductoService;
   }
 
   @GetMapping
@@ -25,21 +25,21 @@ public class ProductoController{
   }
 
   @GetMapping("/{id}")
-  public ResponseEntity<Producto> obtenerPorId(@PathVariable Long id) {
-    return productoService.obtenerPorId(id)
+  public ResponseEntity<Producto> obtenerPorId(@PathVariable Long pId) {
+    return productoService.obtenerPorId(pId)
             .map(ResponseEntity::ok)
             .orElse(ResponseEntity.notFound().build());
   }
 
   @PostMapping
-  public ResponseEntity<Producto> crear(@Valid @RequestBody Producto producto) {
-    Producto guardado = productoService.guardar(producto);
+  public ResponseEntity<Producto> crear(@Valid @RequestBody Producto pProducto) {
+    Producto guardado = productoService.guardar(pProducto);
     return ResponseEntity.status(201).body(guardado);
   }
 
   @DeleteMapping("/{id}")
-  public ResponseEntity<Void> eliminar(@PathVariable Long id) {
-    boolean eliminado = productoService.eliminarPorId(id);
+  public ResponseEntity<Void> eliminar(@PathVariable Long pId) {
+    boolean eliminado = productoService.eliminarPorId(pId);
 
     if (!eliminado) {
       return ResponseEntity.notFound().build();

@@ -36,23 +36,23 @@ public class Producto {
 
   // Getters
   public Long getId(){
-    return id;
+    return this.id;
   }
 
   public String getNombre(){
-    return nombre;
+    return this.nombre;
   }
 
   public String getDescripcion(){
-    return descripcion;
+    return this.descripcion;
   }
 
   public BigDecimal getPrecio(){
-    return precio;
+    return this.precio;
   }
 
   public Integer getStock(){
-    return stock;
+    return this.stock;
   }
 
   // Setters

@@ -12,8 +12,8 @@ public class ProductoServiceImpl implements ProductoService{
 
   private final ProductoRepository productoRepository;
 
-  public ProductoServiceImpl(ProductoRepository productoRepository){
-    this.productoRepository = productoRepository;
+  public ProductoServiceImpl(ProductoRepository pProductoRepository){
+    this.productoRepository = pProductoRepository;
   }
 
   @Override
@@ -22,22 +22,22 @@ public class ProductoServiceImpl implements ProductoService{
   }
 
   @Override
-  public Optional<Producto> obtenerPorId(Long id){
-    return productoRepository.findById(id);
+  public Optional<Producto> obtenerPorId(Long pId){
+    return productoRepository.findById(pId);
   }
 
   @Override
-  public Producto guardar(Producto producto){
-    return productoRepository.save(producto);
+  public Producto guardar(Producto pProducto){
+    return productoRepository.save(pProducto);
   }
 
   @Override
-  public boolean eliminarPorId(Long id){
-    if(!productoRepository.existsById(id)){
+  public boolean eliminarPorId(Long pId){
+    if(!productoRepository.existsById(pId)){
       return false;
     }
 
-    productoRepository.deleteById(id);
+    productoRepository.deleteById(pId);
     return true;
   }
   

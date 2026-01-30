@@ -9,9 +9,9 @@ public interface ProductoService {
 
   List<Producto> obtenerTodos();
 
-  Optional<Producto> obtenerPorId(Long id);
+  Optional<Producto> obtenerPorId(Long pId);
 
-  Producto guardar(Producto producto);
+  Producto guardar(Producto pProducto);
 
-  boolean eliminarPorId(Long id);
+  boolean eliminarPorId(Long pId);
 }
