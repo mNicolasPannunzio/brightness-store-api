@@ -26,6 +26,7 @@ public class PedidoItem {
 
   @Column(nullable = false)
   private BigDecimal precioUnitario;
+  // Precio del producto al momento de la compra
 
   public PedidoItem(){}
 

@@ -16,14 +16,14 @@ public class PedidoServiceImpl implements PedidoService {
   }
 
   @Override
-  public Pedido crearPedido(Pedido pedido) {
+  public Pedido crearPedido(Pedido pPedido) {
 
     // Aseguramos la relacion bidireccional Pedido <-> PedidoItem
-    for (PedidoItem item : pedido.getItems()) {
-        item.setPedido(pedido);
+    for (PedidoItem item : pPedido.getItems()) {
+        item.setPedido(pPedido);
     }
 
     // Guardamos el pedido (cascade guarda los items)
-    return pedidoRepository.save(pedido);
+    return this.pedidoRepository.save(pPedido);
   }
 }

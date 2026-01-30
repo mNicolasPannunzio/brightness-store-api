@@ -20,7 +20,8 @@ public class Pedido {
   @OneToMany(mappedBy = "pedido", 
              cascade = CascadeType.ALL,
              orphanRemoval = true)
-  private List<PedidoItem> items;
+  private List<PedidoItem> items = new ArrayList<>();
+  // Inicializamos para evitar NullPointer al iterar
 
   public Pedido(){
     this.fecha = LocalDateTime.now();

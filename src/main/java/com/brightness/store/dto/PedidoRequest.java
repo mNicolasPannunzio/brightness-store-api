@@ -25,28 +25,29 @@ public class PedidoRequest {
   public Pedido toEntity(ProductoRepository pProductoRepository){
 
     Pedido pedido = new Pedido();
-    List<PedidoItem> pedidoItems = new ArrayList<>();
+    // Creamos el pedido base (fecha y estado ya se setean en el constructor)
 
     // Recorremos los items del request
-    for (PedidoItemRequest itemRequest : this.items){
+    for (PedidoItemRequest itemReq : this.items){
 
       // Buscamos el producto en la base de datos
-      Producto producto = pProductoRepository.findById(itemRequest.getProductoId())
-              .orElseThrow(() -> new RuntimeException("Producto no encontrado: " +
-              itemRequest.getProductoId())
-              );
+      Producto producto = pProductoRepository.findById(itemReq.getProductoId())
+              .orElseThrow(() -> new RuntimeException("Producto no encontrado: "));
+              
 
       // Creamos el item del pedido
       PedidoItem item = new PedidoItem();
+
+      // Asociamos el producto real y la cantidad solicitada por el cliente
       item.setProducto(producto);
-      item.setCantidad(itemRequest.getCantidad());
+      item.setCantidad(itemReq.getCantidad());
+
+      // Congelamos el precio al momento de la compra
+      item.setPrecioUnitario(producto.getPrecio());
 
       // Lo agregamos a la lista
-      pedidoItems.add(item);
+      pedido.getItems().add(item);
     }
-
-    // Asociamos los items al pedido
-    pedido.setItems(pedidoItems);
 
     return pedido;
   }
