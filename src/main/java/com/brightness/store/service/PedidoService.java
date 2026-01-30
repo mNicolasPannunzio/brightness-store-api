@@ -1,8 +1,10 @@
 package com.brightness.store.service;
 
-import com.brightness.store .entity.Pedido;
+import com.brightness.store.entity.Pedido;
 
+// Interfaz del servicio de pedidos
 public interface PedidoService {
   
-  Pedido crearPedido(Pedido pPedido);
+  // el service solo recibe entidades, no DTOs
+  Pedido crearPedido(Pedido pedido);
 }

@@ -10,18 +10,20 @@ public class PedidoServiceImpl implements PedidoService {
   
   private final PedidoRepository pedidoRepository;
 
+  // Inyeccion del repositorio
   public PedidoServiceImpl(PedidoRepository pPedidoRepository){
     this.pedidoRepository = pPedidoRepository;
   }
 
   @Override
-  public Pedido crearPedido(Pedido pPedido){
+  public Pedido crearPedido(Pedido pedido) {
 
-    //Aseguramos relacion bidireccional
-    for(PedidoItem item : pPedido.getItems()){
-      item.setPedido(pPedido);
+    // Aseguramos la relacion bidireccional Pedido <-> PedidoItem
+    for (PedidoItem item : pedido.getItems()) {
+        item.setPedido(pedido);
     }
 
-    return this.pedidoRepository.save(pPedido);
+    // Guardamos el pedido (cascade guarda los items)
+    return pedidoRepository.save(pedido);
   }
 }

@@ -3,6 +3,7 @@ package com.brightness.store.entity;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.ArrayList;
 
 @Entity
 @Table(name = "pedidos")
@@ -24,6 +25,7 @@ public class Pedido {
   public Pedido(){
     this.fecha = LocalDateTime.now();
     this.estado = EstadoPedido.CREADO;
+    this.items = new ArrayList<>();
   }
 
   // Getters
