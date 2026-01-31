@@ -5,6 +5,8 @@ import com.brightness.store.entity.PedidoItem;
 import com.brightness.store.repository.PedidoRepository;
 import org.springframework.stereotype.Service;
 
+import com.brightness.store.exception.PedidoNotFoundException;
+
 import java.util.List;
 
 @Service
@@ -37,8 +39,10 @@ public class PedidoServiceImpl implements PedidoService {
 
   @Override
   public Pedido obtenerPorId(Long pId){
-    // Devuelve el pedido o null si no existe
-    return this.pedidoRepository.findById(pId).orElse(null);
+    
+    // Devuelve el pedido o lanza excepcion si no existe
+    return this.pedidoRepository.findById(pId)
+        .orElseThrow(() -> new PedidoNotFoundException(pId));
   }
 
 
