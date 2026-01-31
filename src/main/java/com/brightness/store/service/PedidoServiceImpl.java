@@ -3,9 +3,11 @@ package com.brightness.store.service;
 import com.brightness.store.entity.Pedido;
 import com.brightness.store.entity.PedidoItem;
 import com.brightness.store.repository.PedidoRepository;
-import org.springframework.stereotype.Service;
-
+import com.brightness.store.dto.PedidoRequest;
+import com.brightness.store.repository.ProductoRepository;
 import com.brightness.store.exception.PedidoNotFoundException;
+
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
@@ -13,10 +15,13 @@ import java.util.List;
 public class PedidoServiceImpl implements PedidoService {
   
   private final PedidoRepository pedidoRepository;
+  private final ProductoRepository productoRepository;
 
   // Constructor que inyecta el repositorio de pedidos
-  public PedidoServiceImpl(PedidoRepository pPedidoRepository){
+  public PedidoServiceImpl(PedidoRepository pPedidoRepository, 
+                           ProductoRepository pProductoRepository){
     this.pedidoRepository = pPedidoRepository;
+    this.productoRepository = pProductoRepository;    
   }
 
   @Override
@@ -29,6 +34,15 @@ public class PedidoServiceImpl implements PedidoService {
 
     // Guardamos el pedido (cascade guarda los items)
     return this.pedidoRepository.save(pPedido);
+  }
+
+  public Pedido crearPedidoDesdeRequest(PedidoRequest pRequest){
+    
+    // Convertimos el request en entidad
+    Pedido pedido = pRequest.toEntity(this.productoRepository);
+
+    // Guardamos el pedido usando el servicio
+    return this.pedidoRepository.save(pedido);
   }
 
   @Override

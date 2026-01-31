@@ -5,12 +5,17 @@ import com.brightness.store.entity.PedidoItem;
 import com.brightness.store.entity.Producto;
 import com.brightness.store.repository.ProductoRepository;
 
-import java.util.ArrayList;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.Valid;
 import java.util.List;
 
 // DTO que representa el pedido recibido por JSON
 public class PedidoRequest {
 
+  @NotNull(message = "La lista de items es obligatoria")
+  @NotEmpty(message = "El pedido debe tener al menos un item")
+  @Valid   // Fuerza a validar cada PedidoItemRequest
   private List<PedidoItemRequest> items;
 
   public List<PedidoItemRequest> getItems(){
