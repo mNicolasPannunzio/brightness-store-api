@@ -11,8 +11,6 @@ public interface PedidoService {
   // el service solo recibe entidades, no DTOs
   Pedido crearPedido(Pedido pPedido);
 
-  Pedido crearPedidoDesdeRequest(PedidoRequest pRequest);
-
   // Devuelve todos los pedidos
   List<Pedido> obtenerTodos();
 

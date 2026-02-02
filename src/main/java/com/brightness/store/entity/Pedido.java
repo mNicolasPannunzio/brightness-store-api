@@ -56,4 +56,12 @@ public class Pedido {
   public void setEstado(EstadoPedido pEstado){
     this.estado = pEstado;
   }
+
+  public void setFecha(LocalDateTime pFecha){
+    this.fecha = pFecha;
+  }
+
+  public void setId(Long pId){
+    this.id = pId;
+  }
 }

@@ -29,10 +29,10 @@ public class PedidoController {
   public PedidoResponse crearPedido(
             @Valid @RequestBody PedidoRequest pRequest){
 
-    // 1. Mandamos el request al service para crear el pedido
-    Pedido pedidoGuardado = this.pedidoService.crearPedidoDesdeRequest(pRequest);
+    Pedido pedido = pRequest.toEntity();
 
-    // 2. Convertimos la entidad guardada a un DTO de respuesta
+    Pedido pedidoGuardado = this.pedidoService.crearPedido(pedido);
+
     return PedidoMapper.toResponse(pedidoGuardado);
   }
 

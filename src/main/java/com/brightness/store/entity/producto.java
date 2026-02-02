@@ -72,4 +72,8 @@ public class Producto {
     this.stock = pStock;
   }
 
+  public void setId(Long pId){
+    this.id = pId;
+  }
+
 }

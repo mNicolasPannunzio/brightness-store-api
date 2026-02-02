@@ -28,6 +28,9 @@ public class PedidoItem {
   private BigDecimal precioUnitario;
   // Precio del producto al momento de la compra
 
+  @Transient
+  private Long productoId;
+
   public PedidoItem(){}
 
   // Getters
@@ -52,6 +55,10 @@ public class PedidoItem {
     return this.precioUnitario;
   }
 
+  public Long getProductoId(){
+    return this.productoId;
+  }
+
   // Setters
 
   public void setPedido(Pedido pPedido){
@@ -64,6 +71,10 @@ public class PedidoItem {
 
   public void setCantidad(Integer pCantidad){
     this.cantidad = pCantidad;
+  }
+
+  public void setProductoId(Long pProductoId){
+    this.productoId = pProductoId;
   }
 
   public void setPrecioUnitario(BigDecimal pPrecioUnitario){

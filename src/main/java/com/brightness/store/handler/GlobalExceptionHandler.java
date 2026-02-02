@@ -1,6 +1,7 @@
 package com.brightness.store.handler;
 
 import com.brightness.store.exception.PedidoNotFoundException;
+import com.brightness.store.exception.StockInsuficienteException;
 
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.http.ResponseEntity;
@@ -37,8 +38,29 @@ public class GlobalExceptionHandler {
         errores.put(error.getField(),error.getDefaultMessage());
       });
 
+      // Respondemos con 400 Bad Request y los errores
       return ResponseEntity.badRequest().body(errores);
         
+    }
+
+
+    @ExceptionHandler(StockInsuficienteException.class)
+    public ResponseEntity<Map<String, String>> handleStockInsuficiente(
+            StockInsuficienteException pException){
+
+      Map<String, String> error = new HashMap<>();
+      error.put("error", pException.getMessage());
+
+      //Respondemos con HTTP 400 Bad Request
+      return ResponseEntity.badRequest().body(error);
+    }
+    
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<String> handleAny(Exception pException) {
+      return ResponseEntity
+          .status(HttpStatus.INTERNAL_SERVER_ERROR)
+          .body("ERROR: " + pException.getClass().getName());
     }
     
 
