@@ -10,7 +10,10 @@ import com.brightness.store.dto.PedidoItemRequest;
 import com.brightness.store.dto.PedidoRequest;
 
 import com.brightness.store.exception.PedidoNotFoundException;
+import com.brightness.store.exception.BadRequestException;
+import com.brightness.store.exception.CantidadInvalidaException;
 import com.brightness.store.exception.StockInsuficienteException;
+import com.brightness.store.exception.PedidoSinItemsException;
 import com.brightness.store.exception.ResourceNotFoundException;
 
 import org.springframework.stereotype.Service;
@@ -39,7 +42,7 @@ public class PedidoServiceImpl implements PedidoService {
 
     // Validamos que el pedido tenga items
     if(pPedido.getItems() == null || pPedido.getItems().isEmpty()){
-      throw new IllegalArgumentException("El pedido debe tener al menos un Item");
+      throw new PedidoSinItemsException();
     }
 
     // Recorremos los items del pedido
@@ -55,14 +58,12 @@ public class PedidoServiceImpl implements PedidoService {
 
       // Validacion cantidad
       if (item.getCantidad() <= 0){
-        throw new IllegalArgumentException("La cantidad debe ser mayor a cero");
+        throw new CantidadInvalidaException();
       }
 
       // Validacion Stock
       if (producto.getStock() < item.getCantidad()){
-        throw new IllegalArgumentException(
-        "Stock insuficiente para el producto: " + producto.getNombre()
-        );
+        throw new StockInsuficienteException(producto.getNombre());
       }
 
       // Descontamos stock

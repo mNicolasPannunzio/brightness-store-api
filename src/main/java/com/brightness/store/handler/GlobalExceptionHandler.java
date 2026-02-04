@@ -2,6 +2,7 @@ package com.brightness.store.handler;
 
 import com.brightness.store.exception.PedidoNotFoundException;
 import com.brightness.store.exception.StockInsuficienteException;
+import com.brightness.store.exception.BadRequestException;
 
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.http.ResponseEntity;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.time.LocalDateTime;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -42,25 +44,35 @@ public class GlobalExceptionHandler {
       return ResponseEntity.badRequest().body(errores);
         
     }
+    
 
+    @ExceptionHandler(BadRequestException.class)
+    public ResponseEntity<Map<String, Object>> handleBadRequest(
+            BadRequestException pException){
 
-    @ExceptionHandler(StockInsuficienteException.class)
-    public ResponseEntity<Map<String, String>> handleStockInsuficiente(
-            StockInsuficienteException pException){
+      Map<String, Object> body = new HashMap<>();
 
-      Map<String, String> error = new HashMap<>();
-      error.put("error", pException.getMessage());
+      body.put("status", HttpStatus.BAD_REQUEST.value());
+      body.put("error", "BAD_REQUEST");
+      body.put("message", pException.getMessage());
+      body.put("timestamp", LocalDateTime.now());
 
-      //Respondemos con HTTP 400 Bad Request
-      return ResponseEntity.badRequest().body(error);
+      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body);
+
     }
     
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<String> handleAny(Exception pException) {
-      return ResponseEntity
-          .status(HttpStatus.INTERNAL_SERVER_ERROR)
-          .body("ERROR: " + pException.getClass().getName());
+    public ResponseEntity<Map<String, Object>> handleAny(Exception pException) {
+      
+      Map<String, Object> body = new HashMap<>();
+      body.put("status", 500);
+      body.put("error", "INTERNAL_SERVER_ERROR");
+      body.put("message", "Ocurrio un error inesperado");
+      body.put("timestamp", LocalDateTime.now());
+
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(body);
+
     }
     
 

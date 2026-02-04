@@ -5,9 +5,9 @@ package com.brightness.store.exception;
  * para uno o mas productos del pedido.
  */
 
-public class StockInsuficienteException extends RuntimeException {
+public class StockInsuficienteException extends BadRequestException {
   
-  public StockInsuficienteException(String pMensaje){
-    super(pMensaje);
+  public StockInsuficienteException(String pProductoNombre){
+    super("Stock insuficiente para el producto: " + pProductoNombre);
   }
 }
