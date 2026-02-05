@@ -28,6 +28,7 @@ Este README busca dejar evidencia clara de:
 * qué aprendizajes surgieron en cada etapa
 
 ---
+---
 
 ## 🧱 Fase 1 – Fundamentos del proyecto
 
@@ -55,6 +56,7 @@ La IA se utilizó para:
 * aclarar conceptos como *Controller vs Service*
 * validar si la arquitectura inicial era correcta
 
+---
 ---
 
 ## 🧱 Fase 2 – Entidades y persistencia
@@ -86,6 +88,7 @@ Modelar el dominio del negocio y persistir datos utilizando JPA/Hibernate.
 * Explicaciones sobre cómo funciona JPA internamente
 
 ---
+---
 
 ## 🧱 Fase 3 – CRUD de Productos
 
@@ -115,6 +118,7 @@ Implementar un CRUD completo para la entidad **Producto**.
 * Explicación de cuándo devolver 404 vs 500
 
 ---
+---
 
 ## 🧱 Fase 4 – Pedidos y lógica de negocio
 
@@ -140,6 +144,7 @@ Introducir la entidad **Pedido** y comenzar a trabajar con lógica de negocio re
 * Discusión sobre excepciones personalizadas
 
 ---
+---
 
 ## 🧱 Fase 5 – Excepciones personalizadas
 
@@ -164,6 +169,7 @@ Reemplazar excepciones genéricas por excepciones propias del dominio.
 * Buenas prácticas profesionales
 
 ---
+---
 
 ## 🧱 Fase 6 – GlobalExceptionHandler
 
@@ -184,6 +190,7 @@ Centralizar el manejo de errores de la aplicación.
 * Inconsistencia en formatos de error
 
 ---
+---
 
 ## 🧱 Fase 7 – Validaciones
 
@@ -201,6 +208,7 @@ Validar datos de entrada antes de llegar a la lógica de negocio.
 * Manejo de `MethodArgumentNotValidException`
 * Diferencia entre validación y excepción
 
+---
 ---
 
 ## 🧱 Fase 8.1 – – Manejo de pedidos y stock
@@ -291,13 +299,119 @@ Esta decisión mejora la mantenibilidad y claridad de la API a largo plazo.
 ---
 
 
+## 🧱 Fase 8.3 – Manejo global de excepciones y errores HTTP
+
+En esta fase se trabajó sobre uno de los aspectos más importantes de una API profesional: el manejo consistente de errores y excepciones.
+Hasta este punto, la aplicación funcionaba correctamente en los casos válidos, pero ante errores (por ejemplo, recursos inexistentes o datos inválidos) podían aparecer respuestas inconsistentes o errores 500 genéricos, dificultando el uso de la API y el debugging.
+
+### 🎯 Objetivos de la fase
+
+* Centralizar el manejo de errores en un único lugar.
+* Evitar el uso de IllegalArgumentException como mecanismo de control de flujo.
+* Devolver respuestas HTTP claras, coherentes y predecibles.
+* Diferenciar correctamente entre errores del cliente (4xx) y errores del servidor (5xx).
+
+### 🧩 Implementación realizada
+1. GlobalExceptionHandler
+Se creó un GlobalExceptionHandler usando @RestControllerAdvice, que permite interceptar excepciones lanzadas desde cualquier controlador o servicio.
+
+**Se implementaron manejadores específicos para:**
+
+* PedidoNotFoundException → Respuesta 404 Not Found cuando un pedido no existe.
+
+* BadRequestException → Respuesta 400 Bad Request para errores de validación de negocio.
+
+* MethodArgumentNotValidException → Manejo de errores de validación automática (@Valid), devolviendo un mapa con los campos inválidos y sus mensajes.
+
+* Exception (genérica) → Respuesta 500 Internal Server Error para errores inesperados, evitando exponer detalles internos.
+
+Esto permitió eliminar respuestas genéricas poco claras y mejorar la experiencia de consumo de la API.
+
+### 🔁 Refactor de excepciones en servicios
+
+Se reemplazaron usos de IllegalArgumentException por excepciones propias del dominio, como:
+* BadRequestException
+* ResourceNotFoundException
+* PedidoNotFoundException
+
+**Esto mejoró:**
+* La legibilidad del código
+* La intención de cada error
+* El mapeo correcto a códigos HTTP
+
+### 🧪 Verificación con curl
+
+Se validó el comportamiento esperado utilizando curl, comprobando que:
+* Buscar un recurso inexistente devuelve 404.
+* Enviar datos inválidos devuelve 400.
+* Los errores de negocio no generan más respuestas 500.
+
+### 📚 Aprendizaje clave
+
+Una API profesional no solo debe “funcionar”, sino fallar bien.
+
+**Esta fase reforzó la importancia de:**
+* Separar errores técnicos de errores de negocio
+* No usar excepciones genéricas
+* Ofrecer respuestas claras y consistentes al cliente
 
 
+---
+
+## 🧱 Fase 8.4 – Definición del contrato y consistencia de la API
+
+La Fase 8.4 **no introdujo cambios directos en el código**, sino que se enfocó en una decisión arquitectónica clave: definir el contrato de la API antes de continuar agregando funcionalidades.
+
+Esta fase simula una práctica real en entornos profesionales, donde no todo avance se mide en líneas de código.
+
+### 🎯 Objetivos de la fase
+
+* Definir criterios claros para las respuestas de la API.
+* Evitar inconsistencias entre endpoints.
+* Preparar el proyecto para refactors controlados.
+* Documentar decisiones antes de implementar cambios estructurales.
+
+### 📐 Decisiones tomadas
+
+Durante esta fase se definieron los siguientes lineamientos:
+
+**Las respuestas de error deben:**
+* Incluir status, error, message y timestamp
+* Ser consistentes en todos los endpoints
+
+**Las excepciones de negocio deben:**
+* Mapearse a códigos HTTP correctos (400, 404, 409)
+* Ser manejadas exclusivamente en el GlobalExceptionHandler
+
+**Los controladores deben:**
+* Delegar toda la lógica al servicio
+* No lanzar excepciones genéricas
+
+Se evaluó el uso de un objeto ApiError como contrato estándar para errores, en lugar de mapas sueltos, priorizando claridad y mantenibilidad.
+
+### 📚 Aprendizaje clave
+
+No todo commit agrega funcionalidad visible:
+algunos reducen deuda técnica futura.
+
+**Esta fase refuerza la idea de que:**
+* Documentar decisiones es parte del desarrollo
+* Definir contratos temprano ahorra tiempo después
+* Trabajar con una IA como herramienta permite detectar problemas antes de que ocurran
+
+### 🤖 Uso de IA como herramienta de aprendizaje
+
+Durante esta fase, la IA se utilizó como:
+
+* Guía para detectar errores de diseño
+* Apoyo para entender flujos de excepciones
+* Validación conceptual antes de escribir código
+* Acompañamiento en debugging real con logs y curl
+
+El proceso fue iterativo: probar, fallar, analizar, corregir y documentar, simulando un entorno profesional real.
 
 
-
-
-
+---
 
 
 ---
