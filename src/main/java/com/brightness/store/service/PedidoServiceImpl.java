@@ -6,9 +6,6 @@ import com.brightness.store.entity.Producto;
 import com.brightness.store.entity.EstadoPedido;
 import com.brightness.store.repository.PedidoRepository;
 import com.brightness.store.repository.ProductoRepository;
-import com.brightness.store.dto.PedidoItemRequest;
-import com.brightness.store.dto.PedidoRequest;
-
 import com.brightness.store.exception.PedidoNotFoundException;
 import com.brightness.store.exception.BadRequestException;
 import com.brightness.store.exception.CantidadInvalidaException;
@@ -20,7 +17,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.ArrayList;
 import java.time.LocalDateTime;
 
 @Service
@@ -96,6 +92,34 @@ public class PedidoServiceImpl implements PedidoService {
     // Devuelve el pedido o lanza excepcion si no existe
     return this.pedidoRepository.findById(pId)
         .orElseThrow(() -> new PedidoNotFoundException(pId));
+  }
+
+
+  @Transactional
+  public Pedido cambiarEstado(Long pId, EstadoPedido pNuevoEstado){
+
+    Pedido pedido = this.obtenerPorId(pId);
+    EstadoPedido estadoActual = pedido.getEstado();
+
+    // Reglas de transicion
+    if(estadoActual == EstadoPedido.CREADO &&
+      (pNuevoEstado == EstadoPedido.PAGADO || pNuevoEstado == EstadoPedido.CANCELADO)){
+
+        pedido.setEstado(pNuevoEstado);
+
+    } else if(estadoActual == EstadoPedido.PAGADO &&
+             pNuevoEstado == EstadoPedido.ENVIADO){
+
+              pedido.setEstado(pNuevoEstado);
+
+            } else {
+              throw new BadRequestException(
+                "No se puede cambiar el estado de " + estadoActual +
+                " a " + pNuevoEstado);
+              
+              }
+
+    return this.pedidoRepository.save(pedido);
   }
 
 

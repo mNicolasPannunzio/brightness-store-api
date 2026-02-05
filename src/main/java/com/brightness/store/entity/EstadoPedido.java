@@ -1,8 +1,10 @@
 package com.brightness.store.entity;
 
 public enum EstadoPedido {
-  CREADO,
-  CONFIRMADO,
-  CANCELADO
+
+  CREADO,       // Pedido recien creado
+  PAGADO,       // Pago confirmado
+  ENVIADO,      // Pedido despachado
+  CANCELADO     // Pedido cancelado
   
 }

@@ -1,7 +1,7 @@
 package com.brightness.store.service;
 
 import com.brightness.store.entity.Pedido;
-import com.brightness.store.dto.PedidoRequest;
+import com.brightness.store.entity.EstadoPedido;
 
 import java.util.List;
 
@@ -16,4 +16,7 @@ public interface PedidoService {
 
   // Devuelve un pedido por id o null si no existe
   Pedido obtenerPorId(Long pId);
+
+  // Cambia el estado de un pedido
+  Pedido cambiarEstado(Long pId, EstadoPedido pNuevoEstado);
 }

@@ -5,11 +5,13 @@ import com.brightness.store.service.PedidoService;
 import com.brightness.store.dto.PedidoRequest;
 import com.brightness.store.dto.PedidoResponse;
 import com.brightness.store.mapper.PedidoMapper;
-import org.springframework.web.bind.annotation.*;
+import com.brightness.store.dto.PedidoEstadoRequest;
 
+import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
 
 import jakarta.validation.Valid;
+
 import java.util.List;
 
 // Este controller maneja los endpoints HTTP de pedidos
@@ -65,4 +67,14 @@ public class PedidoController {
 
   }
 
+
+  @PutMapping("/{id}/estado")
+  public PedidoResponse cambiarEstado(@PathVariable Long id,
+               @Valid @RequestBody PedidoEstadoRequest pRequest){
+
+    Pedido pedido = this.pedidoService.cambiarEstado(id, pRequest.getEstado());
+
+    return PedidoMapper.toResponse(pedido);
+  }
+  
 }
