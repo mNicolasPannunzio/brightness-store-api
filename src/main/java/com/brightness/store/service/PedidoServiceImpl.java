@@ -101,23 +101,60 @@ public class PedidoServiceImpl implements PedidoService {
     Pedido pedido = this.obtenerPorId(pId);
     EstadoPedido estadoActual = pedido.getEstado();
 
+    if (pNuevoEstado == EstadoPedido.CANCELADO){
+      throw new BadRequestException(
+        "Para cancelar un pedido use el endpoint de cancelacion");
+      
+    }
+    
     // Reglas de transicion
-    if(estadoActual == EstadoPedido.CREADO &&
-      (pNuevoEstado == EstadoPedido.PAGADO || pNuevoEstado == EstadoPedido.CANCELADO)){
+    if(estadoActual == EstadoPedido.CREADO && pNuevoEstado == EstadoPedido.PAGADO){
+
+      pedido.setEstado(pNuevoEstado);
+
+    } else if(estadoActual == EstadoPedido.PAGADO &&
+        pNuevoEstado == EstadoPedido.ENVIADO){
 
         pedido.setEstado(pNuevoEstado);
 
-    } else if(estadoActual == EstadoPedido.PAGADO &&
-             pNuevoEstado == EstadoPedido.ENVIADO){
-
-              pedido.setEstado(pNuevoEstado);
-
-            } else {
-              throw new BadRequestException(
-                "No se puede cambiar el estado de " + estadoActual +
-                " a " + pNuevoEstado);
+      } else {
               
-              }
+        throw new BadRequestException(
+          "No se puede cambiar el estado de " + estadoActual + " a " + pNuevoEstado);
+              
+      }
+
+    return this.pedidoRepository.save(pedido);
+  }
+
+
+  @Transactional
+  public Pedido cancelarPedido(Long pId){
+
+    Pedido pedido = this.obtenerPorId(pId);
+
+    EstadoPedido estadoActual = pedido.getEstado();
+
+    // Validaciones de negocio
+    if (estadoActual == EstadoPedido.CANCELADO){
+
+      throw new BadRequestException("El pedido ya esta cancelado");
+    }
+
+    if(estadoActual == EstadoPedido.ENVIADO){
+
+      throw new BadRequestException("No se puede cancelar un pedido enviado");
+    }
+
+    // Revertimos stock de los productos
+    for (PedidoItem item : pedido.getItems()){
+
+      Producto producto = item.getProducto();
+      producto.setStock(producto.getStock() + item.getCantidad());
+    }
+
+    // Cambiamos estado a cancelado
+    pedido.setEstado(EstadoPedido.CANCELADO);
 
     return this.pedidoRepository.save(pedido);
   }

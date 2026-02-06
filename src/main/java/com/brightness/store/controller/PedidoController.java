@@ -70,11 +70,20 @@ public class PedidoController {
 
   @PutMapping("/{id}/estado")
   public PedidoResponse cambiarEstado(@PathVariable Long id,
-               @Valid @RequestBody PedidoEstadoRequest pRequest){
+          @Valid @RequestBody PedidoEstadoRequest pRequest){
 
     Pedido pedido = this.pedidoService.cambiarEstado(id, pRequest.getEstado());
 
     return PedidoMapper.toResponse(pedido);
+  }
+
+
+  @PatchMapping("/{id}/cancelar")
+  public ResponseEntity<Pedido> cancelar(@PathVariable Long id){
+    
+    Pedido pedido = pedidoService.cancelarPedido(id);
+
+    return ResponseEntity.ok(pedido);
   }
   
 }

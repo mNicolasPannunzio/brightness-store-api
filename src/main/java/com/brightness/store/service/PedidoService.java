@@ -19,4 +19,7 @@ public interface PedidoService {
 
   // Cambia el estado de un pedido
   Pedido cambiarEstado(Long pId, EstadoPedido pNuevoEstado);
+
+  // Cancela un pedido y vuelve a sumar el stock de los productos
+  Pedido cancelarPedido(Long pId);
 }
