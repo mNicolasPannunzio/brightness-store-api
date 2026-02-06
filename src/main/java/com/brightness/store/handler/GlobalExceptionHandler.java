@@ -5,8 +5,16 @@ import com.brightness.store.exception.*;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+
+import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+
+
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -60,6 +68,22 @@ public class GlobalExceptionHandler {
       .body(new ApiError(HttpStatus.NOT_FOUND, pException.getMessage()));
   }
 
+    
+
+  @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+  public ResponseEntity<Map<String, Object>> handleTypeMismatch(
+    MethodArgumentTypeMismatchException pException) {
+
+    Map<String, Object> body = new HashMap<>();
+    body.put("status", HttpStatus.BAD_REQUEST.value());
+    body.put("error", "BAD_REQUEST");
+    body.put("message", "Estado de pedido inválido: " + pException.getValue());
+    body.put("timestamp", LocalDateTime.now());
+
+    return ResponseEntity.badRequest().body(body);
+ }
+
+
   @ExceptionHandler(Exception.class)
   public ResponseEntity<ApiError> handleAny(Exception pException) {
       
@@ -68,7 +92,6 @@ public class GlobalExceptionHandler {
                "Ocurrio un error inseperado"));
              
   }
-    
 
   
 }

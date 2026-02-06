@@ -418,11 +418,12 @@ El proceso fue iterativo: probar, fallar, analizar, corregir y documentar, simul
 **En estas fases planteadas por ChatGPT me di cuenta que me pedia realizar cosas que ya habiamos hecho previamente**
 
 * Fase 8.5: no hay nada nuevo que hacer en la “Fase 8.5” tal como la planteé recién, porque:
-* @Transactional ✔️
-* Validaciones de negocio ✔️
-* Excepciones correctas ✔️
-* Orden lógico correcto ✔️
-* Rollback probado con curl ✔️
+
+ * @Transactional ✔️
+ * Validaciones de negocio ✔️
+ * Excepciones correctas ✔️
+ * Orden lógico correcto ✔️
+ * Rollback probado con curl ✔️
 
 👉 Todo eso YA está implementado y funcionando en tu código actual.
 

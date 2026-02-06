@@ -1,11 +1,13 @@
 package com.brightness.store.controller;
 
 import com.brightness.store.entity.Pedido;
+import com.brightness.store.entity.EstadoPedido;
 import com.brightness.store.service.PedidoService;
 import com.brightness.store.dto.PedidoRequest;
 import com.brightness.store.dto.PedidoResponse;
-import com.brightness.store.mapper.PedidoMapper;
 import com.brightness.store.dto.PedidoEstadoRequest;
+import com.brightness.store.mapper.PedidoMapper;
+import com.brightness.store.exception.BadRequestException;
 
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
@@ -38,15 +40,28 @@ public class PedidoController {
     return PedidoMapper.toResponse(pedidoGuardado);
   }
 
+
   @GetMapping
-  public List<PedidoResponse> obtenerTodos(){
+  public List<PedidoResponse> obtenerPedidos(
+    @RequestParam(name = "estado",required = false) String pEstado){
 
-    // Recuperamos todos los pedidos
-    List<Pedido> pedidos = this.pedidoService.obtenerTodos();
+    if(pEstado == null){
+      return pedidoService.obtenerTodos()
+      .stream().map(PedidoMapper::toResponse).toList();
+    }
 
-    // Convertimos entidades a responses
-    return pedidos.stream().map(PedidoMapper::toResponse).toList();
+    EstadoPedido estadoEnum;
+    try{
+      estadoEnum = EstadoPedido.valueOf(pEstado.toUpperCase());
+
+    }catch(IllegalArgumentException pEx){
+      throw new BadRequestException("Estado de pedido invalido: " + pEstado);
+    }
+
+    return pedidoService.obtenerPorEstado(estadoEnum)
+      .stream().map(PedidoMapper::toResponse).toList();
   }
+  
 
   @GetMapping("/{id}") // El nombre del path variable debe coincidir con el del parametro
   public ResponseEntity<PedidoResponse> obtenerPorId(

@@ -22,4 +22,7 @@ public interface PedidoService {
 
   // Cancela un pedido y vuelve a sumar el stock de los productos
   Pedido cancelarPedido(Long pId);
+
+  // Devuelve una lista de pedidos dependiendo del estado solicitado
+  List<Pedido> obtenerPorEstado(EstadoPedido pEstado);
 }

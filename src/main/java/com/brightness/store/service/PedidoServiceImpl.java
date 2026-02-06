@@ -160,4 +160,11 @@ public class PedidoServiceImpl implements PedidoService {
   }
 
 
+  @Override
+  public List<Pedido> obtenerPorEstado(EstadoPedido pEstado){
+
+    return this.pedidoRepository.findByEstado(pEstado);
+  }
+
+
 }
