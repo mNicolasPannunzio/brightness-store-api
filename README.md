@@ -570,6 +570,92 @@ Esta fase marcó un punto importante en la comprensión de problemas reales de b
 ---
 ---
 
+## 🧩 Fase 9.5 – Listado de pedidos con filtro por estado
+
+### 🎯 Objetivo
+
+El objetivo de esta fase fue extender el endpoint de listado de pedidos para que permita:
+
+* Obtener **todos los pedidos** del sistema.
+* Filtrar los pedidos **por estado** (`CREADO`, `PAGADO`, `ENVIADO`, `CANCELADO`) de forma opcional.
+* Mantener un único endpoint REST limpio y coherente, siguiendo buenas prácticas de diseño de APIs.
+
+La idea principal fue que el mismo endpoint `/pedidos` pudiera responder a distintos escenarios según la presencia o no de parámetros de consulta (`query params`).
+
+
+### 🐞 Problemas encontrados y cómo se solucionaron
+
+#### ❌ El filtro por estado no funcionaba correctamente
+
+Al realizar llamadas como:
+
+```bash
+curl http://localhost:8080/pedidos?estado=PAGADO;
+```
+
+la API devolvía todos los pedidos, ignorando completamente el estado enviado por parámetro.
+
+Incluso valores inválidos como:
+
+```bash
+curl http://localhost:8080/pedidos?estado=INVALIDO
+```
+
+también devolvían la lista completa, lo cual indicaba que el filtro no estaba siendo aplicado.
+
+#### 🔍 Análisis del problema
+
+El problema no estaba en:
+* El repository
+* El service
+* La lógica condicional
+
+Sino en el binding del parámetro @RequestParam, que no estaba siendo interpretado correctamente por Spring.
+
+Esto hacía que el parámetro estado llegara siempre como null, provocando que el controller ejecutara el camino por defecto (obtenerTodos()).
+
+#### ✅ Solución aplicada
+
+Se corrigió la definición del parámetro en el controller, asegurando que:
+* El nombre del @RequestParam coincida exactamente con el query param.
+* Spring pueda mapear correctamente el valor al enum EstadoPedido.
+* Los valores inválidos generen un error controlado (BadRequestException).
+
+Una vez aplicado el ajuste, los endpoints comenzaron a responder correctamente tanto a filtros válidos como inválidos.
+
+### 📚 Aprendizajes de la fase
+
+Durante esta fase se consolidaron varios conceptos importantes:
+* Uso correcto de @RequestParam(required = false) para filtros opcionales.
+* Diseño de endpoints REST flexibles, evitando duplicación de rutas.
+* Diferencia entre:
+   * Error de lógica
+   * Error de binding / mapeo
+* Cómo Spring maneja:
+   * Enums en parámetros de consulta
+   * Valores inválidos en requests
+* Importancia de validar no solo la lógica, sino también el flujo real de entrada HTTP.
+* Uso de curl como herramienta clave para testear escenarios reales y edge cases.
+
+Además, se reforzó la idea de que un endpoint puede fallar aunque el código “parezca correcto”, si el mapeo HTTP no está bien definido.
+
+### 🤖 Uso de la IA durante la fase
+
+La inteligencia artificial fue utilizada como una herramienta activa de análisis y debugging, no solo como generador de código.
+
+En esta fase la IA ayudó a:
+* Analizar los resultados reales de múltiples pruebas con curl.
+* Detectar que el problema no estaba en la lógica del service sino en el controller.
+* Explicar en detalle cómo funciona el binding de @RequestParam en Spring Boot.
+* Proponer una estructura más limpia del endpoint evitando duplicación de métodos.
+* Aclarar buenas prácticas de commits (feat vs fix) y cierre de fases.
+
+La interacción constante permitió iterar rápidamente, detectar errores sutiles y reforzar el aprendizaje práctico, simulando una dinámica real de trabajo colaborativo.
+
+
+---
+---
+
 
 
 
