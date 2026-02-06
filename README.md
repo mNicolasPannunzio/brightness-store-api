@@ -412,8 +412,167 @@ El proceso fue iterativo: probar, fallar, analizar, corregir y documentar, simul
 
 
 ---
+---
+## 🧱 Fases desde 8.5 a 9.3 - ⚠️Error de consistencia de la IA⚠️
+
+**En estas fases planteadas por ChatGPT me di cuenta que me pedia realizar cosas que ya habiamos hecho previamente**
+
+* Fase 8.5: no hay nada nuevo que hacer en la “Fase 8.5” tal como la planteé recién, porque:
+* @Transactional ✔️
+* Validaciones de negocio ✔️
+* Excepciones correctas ✔️
+* Orden lógico correcto ✔️
+* Rollback probado con curl ✔️
+
+👉 Todo eso YA está implementado y funcionando en tu código actual.
+
+**Una vez cerrada la Fase 8.5 la IA me propuso la fase 9.0, pero esta tambien tenia inconsistencias y me pedia cosas que ya estaban implementadas en mi codigo**
+
+### Respuesta de la IA (ChatGPT) ante la inconsistencia:
+
+Lo que hiciste ya está un nivel más arriba de lo que yo te propuse como 9.0. De hecho, lo que mostrás corresponde a varias fases adelantadas juntas, y bien hechas.
+
+Voy por partes, con calma y orden, como pediste 👇
+
+1️⃣ Diagnóstico honesto de la situación
+Lo que YA TENÉS implementado
+
+Por lo que mostrás, tu proyecto ya incluye:
+
+✔ Estados de pedido avanzados
+CREADO → PAGADO → ENVIADO
+CREADO → CANCELADO
 
 
+Esto supera:
+
+* la fase “confirmar pedido”
+
+* la fase “cancelar pedido”
+
+* la fase “transiciones simples”
+
+✔ DTO específico para cambio de estado
+PedidoEstadoRequest
+
+
+Esto es nivel profesional:
+
+* no usás strings sueltos
+
+* validás con @NotNull
+
+* desacoplás API ↔ dominio
+
+✔ Lógica de máquina de estados en el Service
+cambiarEstado(Long id, EstadoPedido nuevoEstado)
+
+
+Y además:
+
+* reglas claras
+
+* excepción de negocio (BadRequestException)
+
+* método transaccional
+
+👉 Esto no es fase 9.0 básica
+👉 Esto es 9.2 / 9.3 tranquilamente
+
+**2️⃣ Dónde estuvo la inconsistencia (mea culpa)**
+
+Yo asumí este orden lógico:
+
+8.x → 9.0 confirmar → 9.1 cancelar → 9.2 estados
+
+
+**Pero vos ya habías implementado directamente:**
+
+Estados + transiciones + DTO + validación
+
+
+O sea:
+
+* saltaste fases intermedias (bien)
+
+* el código no está mal
+
+* el problema fue el orden conceptual, no tu implementación
+
+👉 Gracias por frenar y pedir revisión antes de seguir. Eso es exactamente lo que hace alguien que quiere un proyecto serio.
+
+3️⃣ Reordenamiento REAL de las fases (desde ahora)
+
+Voy a reordenar las fases según el código real que ya existe, no según un temario teórico.
+
+✅ Fases ya COMPLETADAS (aunque no todas estén en el README)
+
+8.1 – Validaciones y excepciones
+
+8.2 – GlobalExceptionHandler
+
+8.3 – ResourceNotFound + errores consistentes
+
+8.4 – Documentación (README parcial)
+
+8.5 – Excepciones específicas (PedidoSinItems, Stock, Cantidad)
+
+9.0 – Estados de pedido
+
+9.1 – Transiciones válidas
+
+9.2 – DTO para cambio de estado
+
+9.3 – Reglas de negocio en Service
+
+### ⚠️Evidencia que la IA no siempre puede encargarse de todo un proyecto de este calibre. Tengo que estar atento a cada respuesta y comprobar cada dato por mi cuenta para mantener la consistencia y seriedad del proyecto.⚠️
+
+---
+---
+## 🧱 Fase 9.4 – Cancelación de pedidos y reversión de stock
+
+**En esta fase se implementó la cancelación de pedidos, incorporando reglas de negocio reales y consistentes con un sistema de e-commerce profesional.**
+
+### 🧩 Funcionalidad implementada:
+* Se agregó un endpoint PATCH para cancelar pedidos existentes.
+* La cancelación solo es válida si el pedido se encuentra en estado CREADO.
+* Al cancelar un pedido: 
+   * Se revierte el stock de cada producto involucrado.
+   * El pedido pasa a estado CANCELADO.
+* Se validaron transiciones de estado inválidas, devolviendo errores controlados (400 Bad Request).
+
+### ⚠️ Problema real detectado
+
+Durante las pruebas, la cancelación funcionaba correctamente a nivel lógico y de base de datos, pero el endpoint devolvía un error 500 al intentar serializar la respuesta JSON.
+
+El problema se debía a una **relación bidireccional entre Pedido y PedidoItem**, que generaba una recursión infinita durante la serialización (pedido → items → pedido → …).
+
+**Solución aplicada:**
+* Se identificó el problema como un bug de serialización, no de lógica.
+* Se corrigió utilizando @JsonIgnore en la referencia inversa (PedidoItem → Pedido), evitando que Jackson vuelva a serializar el objeto padre.
+* Esta solución permitió:
+   * Respuestas JSON correctas
+   * Eliminación del error 500
+   * Mantener intacta la lógica de negocio y JPA
+
+### 📚 Aprendizajes clave
+
+* Importancia de no exponer entidades JPA directamente sin control.
+* Manejo de relaciones bidireccionales en APIs REST.
+* Diferenciación clara entre:
+   * feature (nueva funcionalidad)
+   * fix (corrección de bug)
+   * refactor (mejora interna sin cambio de comportamiento)
+
+Esta fase marcó un punto importante en la comprensión de problemas reales de backend que no suelen aparecer en ejemplos académicos.
+
+---
+---
+
+
+
+
+---
 ---
 
 
