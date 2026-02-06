@@ -1,5 +1,7 @@
 package com.brightness.store.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import java.math.BigDecimal;
@@ -14,6 +16,7 @@ public class PedidoItem {
 
   @ManyToOne(optional = false)
   @JoinColumn(name = "pedido_id", nullable = false)
+  @JsonIgnore
   private Pedido pedido;
 
   @ManyToOne(optional = false)
